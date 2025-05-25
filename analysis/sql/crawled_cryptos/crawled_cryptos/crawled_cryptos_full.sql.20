@@ -1,0 +1,14 @@
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zeusshield');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('ziftrcoin');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zilliqa');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zimstake');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zip');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zipcoin');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zirkcoin');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zkswap');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zksync');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zombiecoin');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zonecoin');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zoom');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zrcoin');
+INSERT INTO crawled_cryptos (cryptocurrency) VALUES ('zvchain');
