@@ -12,7 +12,7 @@ sudo apt update
 sudo apt install -y "${REQUIRED_PACKAGES[@]}"
 
 # Define paths
-rootPath="$(pwd)"
+rootPath="$(dirname "$(realpath "$0")")"
 envPath="$rootPath/cryptoEnvU"
 scrapCryptos="$rootPath/binance/scrap_cryptos.py"
 launcherScript="$rootPath/scrap_cryptos.sh"
