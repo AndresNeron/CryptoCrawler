@@ -1,3 +1,5 @@
+\c cryptocurrency
+
 INSERT INTO crawled_cryptos (id, cryptocurrency) VALUES (1, '1inch');
 INSERT INTO crawled_cryptos (id, cryptocurrency) VALUES (2, 'aave');
 INSERT INTO crawled_cryptos (id, cryptocurrency) VALUES (3, 'across-protocol');
