@@ -21,6 +21,7 @@ fi
 source "$VENV_ACTIVATE"
 
 scrap_crypto(){
+	cd "$(pwd)"
 	echo "Test executed at $(date)	$(pwd)" >> "$DEBUG_LOG"
 
 	# Execute the Python script
