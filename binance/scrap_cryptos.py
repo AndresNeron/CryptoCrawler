@@ -152,82 +152,65 @@ def scrap_currency(crypto_currency, db_cursor, db_conn):
     global cont_crypto
     url = f"https://coinmarketcap.com/currencies/{crypto_currency}/"
 
-    registry = []
-    registry.append(crypto_currency)
-
-    # Generate and append the current timestamp
-    global timestamp_global
-    registry.append(timestamp_global)
-
-    #print(crypto_currency)
-    
-    
-    # Send a GET request to the URL
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
 
-        response.raise_for_status()  # Raise an error for bad responses (4xx and 5xx)
-        
-        # Parse the HTML content with Beautiful Soup
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        #price_element = soup.find(class_=html_dict['price'])
-        #price = price_element.text
-        #registry.append(price)
-        #print(price)
-                
-        # Find all <span> elements
+        registry = [crypto_currency]
+
+        # Ensure timestamp_global exists
+        try:
+            registry.append(timestamp_global)
+        except NameError:
+            print(f"[!] 'timestamp_global' is not defined.")
+            return
+
+        # Extract dollar values
         span_elements = soup.find_all('span')
+        values_found = []
 
-        # Loop through the found <span> elements and print their text
         for span in span_elements:
-            text = span.get_text(strip=True)
-            text = text.replace(",", "")
+            text = span.get_text(strip=True).replace(",", "")
             if '$' in text:
-                registry.append(text.replace('$', ''))
-                #registry.append(text)
-                #print(text)
+                values_found.append(text.replace('$', ''))
+            if len(values_found) >= 4:
+                break  # We only need 4 values
 
-        # Fill missing fields with NULL if necessary
+        registry.extend(values_found[:4])
+
+        # Fill missing fields with NULL
         while len(registry) < 6:
             registry.append(None)
 
-        final_registry = ','.join(registry[:6])
+        final_registry = ','.join(str(val) if val is not None else 'NULL' for val in registry[:6])
 
+        if registry[2] is not None:
+            try:
+                db_cursor.execute(
+                    """
+                    INSERT INTO crypto_data (cryptocurrency, timestamp, price, market_cap, volume, fdv)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    tuple(registry[:6])
+                )
+                db_conn.commit()
+                print(Colors.ORANGE + f"[{cont_crypto}] Inserted: {final_registry}" + Colors.R)
+            except Exception as db_err:
+                db_conn.rollback()  # Roll back only this failed transaction
+                print(f"[{cont_crypto}] DB insert failed for '{crypto_currency}': {db_err}")
+        else:
+            print(f"[{cont_crypto}] Skipped '{crypto_currency}' - price not found.")
 
-        # Insert data into the database
-        db_cursor.execute(
-            """
-            INSERT INTO crypto_data (cryptocurrency, timestamp, price, market_cap, volume, fdv)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """,
-            (registry[0], registry[1], registry[2], registry[3], registry[4], registry[5])  # Pass individual elements
-        )
-        db_conn.commit()
-        print(Colors.ORANGE + f"[{cont_crypto}] Inserted: {final_registry}" + Colors.R)
         cont_crypto += 1
 
-
-
-#        # Define base path and subdirectory
-#        base_path = Path("/home/archenemy/DataSets")
-#        directory_name = "coins5"
-#        new_directory = base_path / directory_name
-#
-#        # Create the directory if it doesn't exist
-#        new_directory.mkdir(parents=True, exist_ok=True)
-#
-#        # Define file path
-#        filename = new_directory / f"{crypto_currency}.csv"
-#
-#        # Ensure the file exists and append the data
-#        with open(filename, mode='a') as file:
-#            file.write(final_registry + "\n")
-
     except requests.exceptions.HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')
+        print(f"[{cont_crypto}] HTTP error for '{crypto_currency}': {http_err}")
+        cont_crypto += 1
     except Exception as err:
-        print(f'Other error occurred: {err}')
+        print(f"[{cont_crypto}] Error for '{crypto_currency}': {err}")
+        cont_crypto += 1
 
 
 # This method inserts a registry for calculating the total assets for a specific timestamp
