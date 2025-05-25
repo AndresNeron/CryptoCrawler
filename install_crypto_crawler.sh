@@ -17,13 +17,23 @@ envPath="$rootPath/cryptoEnvU"
 scrapCryptos="$rootPath/binance/scrap_cryptos.py"
 launcherScript="$rootPath/scrap_cryptos.sh"
 
-# Setup postgres users and tables
-sqlScript="$rootPath/analysis/sql/create.sql"
-tmp_sql="/tmp/create.sql"
-cp "$sqlScript" "$tmp_sql"
-chmod 644 "$tmp_sql"
-sudo -u postgres psql -f "$tmp_sql"
-rm "$tmp_sql"
+# Function to run a SQL script as the postgres user
+run_sql_script() {
+    local script_path="$1"
+    local tmp_file="/tmp/$(basename "$script_path")"
+
+    cp "$script_path" "$tmp_file"
+    chmod 644 "$tmp_file"
+    sudo -u postgres psql -f "$tmp_file"
+    rm "$tmp_file"
+}
+
+# Define root path
+sql_dir="$rootPath/analysis/sql"
+
+# Run each SQL script
+run_sql_script "$sql_dir/create.sql"
+run_sql_script "$sql_dir/crawled_cryptos.sql"
 
 # Create virtual environment
 echo "[+] Creating virtual environment..."
