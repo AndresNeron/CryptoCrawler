@@ -29,7 +29,7 @@ scrap_crypto(){
 	PYTHON_SCRIPT="$PARENT_DIR/binance/scrap_cryptos.py"
     echo "Step 1: Starting $PYTHON_SCRIPT" >> "$DEBUG_LOG"
     "$PYTHON_EXECUTABLE" "$PYTHON_SCRIPT"
-    "$PYTHON_EXECUTABLE" "$PYTHON_SCRIPT" -p
+    #"$PYTHON_EXECUTABLE" "$PYTHON_SCRIPT" -p
     if [ $? -eq 0 ]; then
         echo "Step 2: Script completed successfully" >> "$DEBUG_LOG"
     else
