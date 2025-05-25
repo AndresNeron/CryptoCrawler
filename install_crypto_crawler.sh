@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script sets up everything for running scan_private
+# This script sets up everything for running crypto_crawler
 
 set -e
 
@@ -13,7 +13,7 @@ sudo apt install -y "${REQUIRED_PACKAGES[@]}"
 
 # Define paths
 rootPath="$(pwd)"
-envPath="$rootPath/scanEnvU"
+envPath="$rootPath/cryptoEnvU"
 scrapCryptos="$rootPath/binance/scrap_cryptos.py"
 launcherScript="$rootPath/scrap_cryptos.sh"
 
@@ -39,7 +39,7 @@ deactivate
 chmod +x "$launcherScript"
 
 # Install the cronjob
-echo "[+] Installing cron job to /etc/cron.d/scan_private..."
+echo "[+] Installing cron job to /etc/cron.d/crypto_crawler..."
 
 cron_file="/etc/cron.d/crypto_crawler"
 cron_entry="*/5 * * * * root $launcherScript >> $rootPath/crypto_crawler.log 2>&1"
