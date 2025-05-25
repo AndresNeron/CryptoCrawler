@@ -4,13 +4,14 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export PATH
 
-DEBUG_LOG="$(pwd)/debug.log"
-NORMAL_LOG="$(pwd)/graphs.log"
+PARENT_DIR="$(dirname "$(realpath "$0")")"
+DEBUG_LOG="$PARENT_DIR/debug.log"
+NORMAL_LOG="$PARENT_DIR/graphs.log"
 
 # Activate the virtual environment
 VENV_NAME="cryptoEnvU"
-VENV_ACTIVATE="$(pwd)/$VENV_NAME/bin/activate"
-PYTHON_EXECUTABLE="$(pwd)/$VENV_NAME/bin/python3"
+VENV_ACTIVATE="$PARENT_DIR/$VENV_NAME/bin/activate"
+PYTHON_EXECUTABLE="$PARENT_DIR/$VENV_NAME/bin/python3"
 if [ -f "$VENV_ACTIVATE" ]; then
 	source "$VENV_ACTIVATE"
 	echo "Virtual environment ACTIVATED using $VENV_ACTIVATE" >> "$DEBUG_LOG"
@@ -21,11 +22,11 @@ fi
 source "$VENV_ACTIVATE"
 
 scrap_crypto(){
-	cd "$(pwd)"
-	echo "Test executed at $(date)	$(pwd)" >> "$DEBUG_LOG"
+	cd "$PARENT_DIR"
+	echo "Test executed at $(date)	$PARENT_DIR" >> "$DEBUG_LOG"
 
 	# Execute the Python script
-	PYTHON_SCRIPT="$(pwd)/binance/scrap_cryptos.py"
+	PYTHON_SCRIPT="$PARENT_DIR/binance/scrap_cryptos.py"
     echo "Step 1: Starting $PYTHON_SCRIPT" >> "$DEBUG_LOG"
     "$PYTHON_EXECUTABLE" "$PYTHON_SCRIPT"
     "$PYTHON_EXECUTABLE" "$PYTHON_SCRIPT" -p
