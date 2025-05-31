@@ -24,8 +24,15 @@ You can install this program simple executing the installer on your system like 
 ./install_crypto_crawler.sh
 ```
 
-The command above will install all the necessary apt packages for building the application.
+The command above will install all the necessary apt packages for building the application. 
+And will include cronjob located at /etc/cron.d/crypto_crawler like this:
 
+```bash
+*/15 * * * * root /home/eq12/GitHub/CryptoCrawler/scrap_cryptos.sh >> /home/eq12/GitHub/CryptoCrawler/crypto_crawler.log 2>&1
+```
+
+The cronjob above will fetch the real price of each crypto stored on crawled_cryptos table and will save it in the 
+table crypto_data of the PostgreSQL database.
 
 
 
