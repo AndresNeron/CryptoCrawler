@@ -6,5 +6,5 @@
 find /tmp/crypto_data -type f | grep -vE 'create.sql|crawled_cryptos_ranked'  | while read script_path;
 do
 	echo "$script_path"
-	#sudo -u postgres psql -f "$script_path"
+	sudo -u postgres psql -d cryptocurrency -f "$script_path"
 done
