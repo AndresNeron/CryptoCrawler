@@ -52,7 +52,7 @@ chmod +x "$launcherScript"
 echo "[+] Installing cron job to /etc/cron.d/crypto_crawler..."
 
 cron_file="/etc/cron.d/crypto_crawler"
-cron_entry="*/5 * * * * root $launcherScript >> $rootPath/crypto_crawler.log 2>&1"
+cron_entry="*/15 * * * * root $launcherScript >> $rootPath/crypto_crawler.log 2>&1"
 
 # Write to the system-wide cron file
 echo "$cron_entry" | sudo tee "$cron_file" > /dev/null
