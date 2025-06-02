@@ -8,7 +8,7 @@ set -e
 REQUIRED_PACKAGES=(libpq-dev python3-dev gcc postgresql python3-virtualenv )
 
 echo "[+] Installing required packages..."
-sudo apt update
+sudo apt update || true
 sudo apt install -y "${REQUIRED_PACKAGES[@]}"
 
 # Define paths
