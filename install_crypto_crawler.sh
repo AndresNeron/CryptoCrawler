@@ -33,7 +33,7 @@ sql_dir="$rootPath/analysis/sql"
 
 # Run each SQL script
 run_sql_script "$sql_dir/create.sql"
-run_sql_script "$sql_dir/crawled_cryptos/crawled_cryptos_ranked.sql"
+#run_sql_script "$sql_dir/crawled_cryptos/crawled_cryptos_ranked.sql"
 
 # Create virtual environment
 echo "[+] Creating virtual environment..."
