@@ -280,3 +280,17 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE model_results TO crypto_user;
 -- Grant usage and update privileges on the sequence
 GRANT USAGE, SELECT ON SEQUENCE model_results_id_seq TO crypto_user;
 GRANT UPDATE ON SEQUENCE model_results_id_seq TO crypto_user;
+
+
+-- Create a temporary table
+CREATE TABLE temp_crypto_data (
+  cryptocurrency TEXT,
+  "timestamp" TIMESTAMP,
+  price NUMERIC,
+  market_cap TEXT,
+  volume TEXT,
+  fdv TEXT
+);
+
+-- Grant permissions to crypto_user
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE temp_crypto_data TO crypto_user;
