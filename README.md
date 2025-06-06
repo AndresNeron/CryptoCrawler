@@ -3,6 +3,7 @@ This is a tool for automating the fetching of cryptocurrency prices in real time
 writen in python and intented to run on a Debian based system where Tensorflow will be build.
 
 The idea of this project is to distribute the crawling of different cryptos across nodes.
+And store historical on a distributed PostgreSQL database.
 
 # Features
 Under 'analysis' directory there exist graph_cryptos.py for graphing the different cryptos
