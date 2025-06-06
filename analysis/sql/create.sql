@@ -4,6 +4,7 @@ CREATE DATABASE cryptocurrency;
 
 /* Create another user and grant permissions*/
 CREATE USER crypto_user WITH PASSWORD 'HrEvPIaoSN53gG04Sb';
+ALTER ROLE crypto_user WITH REPLICATION;
 
 \c cryptocurrency
 

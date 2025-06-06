@@ -10,9 +10,9 @@ with data from the database for different time periods.
 
 Tensorflow is used inside this project for training inference AI models over timestamp data.
 
-# 
-This project creates schemas for tracking your personal assets across timestamps. You need to setup binance API keys
-for this to work for your wallet on a secure file.
+# Track personal assets
+This project creates schemas for tracking your personal assets across timestamps. You need to setup
+your binance API key on a secure file for this to work using your wallet.
 
 # Requirements
 This was tested on a Debian based system (Ubuntu in particular). The package manager apt is used in this code.
@@ -36,3 +36,9 @@ table crypto_data of the PostgreSQL database.
 
 
 
+# Active development
+
+This project is in active development. Some new planned features are, 
+
+1. Track historical cryptocurrency prices from different sources.
+2. Track historical stock prices from different sources.
