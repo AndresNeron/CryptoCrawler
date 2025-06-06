@@ -22,6 +22,8 @@ This was tested on a Debian based system (Ubuntu in particular). The package man
 
 You can install this program simple executing the installer on your system like this:
 ```bash
+git clone https://github.com/AndresNeron/CryptoCrawler.git
+cd CryptoCrawler
 ./install_crypto_crawler.sh
 ```
 
