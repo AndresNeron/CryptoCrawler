@@ -196,7 +196,7 @@ def get_graphs_directory(time_span):
     """
     time_span = time_span.replace(' ', '_')
     execution_date = datetime.now().strftime("%Y-%m-%d")
-    graphs_dir = f"graphs/{time_span}"
+    graphs_dir = f"graphs/{globals.timestamp}/{time_span}"
     os.makedirs(graphs_dir, exist_ok=True)
     return graphs_dir
 
