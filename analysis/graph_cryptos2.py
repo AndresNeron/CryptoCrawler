@@ -517,12 +517,12 @@ def analysis3(cursor, conn, start_date="1 month", interval="1 day"):
     plt.tight_layout()
 
     # Generate custom directory path: graphs/total_trends/<interval>
-    graph_dir = os.path.join("graphs", "total_trends", start_date_str)
+    graph_dir = os.path.join("graphs", "total_trends", globals.timestamp, start_date_str)
     os.makedirs(graph_dir, exist_ok=True)
 
     # Save with timestamp in filename
     timestamp_suffix = end_date.strftime("%Y-%m-%d_%H-%M-%S")
-    graph_filename = f"total_asset_trends_{timestamp_suffix}.png"
+    graph_filename = f"total_asset_trends_{timestamp_suffix}_{interval}.png"
     graph_path = os.path.join(graph_dir, graph_filename)
 
     if os.path.exists(graph_path):
