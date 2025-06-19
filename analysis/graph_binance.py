@@ -557,18 +557,9 @@ if __name__ == "__main__":
                 if free > 0:
                     symbol = f"{asset}USDT"
                     try:
-                        print(Colors.GREEN + f"Running test trading for {symbol}..." + Colors.R)
-                        date_combinations = [
-                        ('15m', '6 dec 2024'),
-                        ('5m', '24 dec 2024'),
-                        ('1d', '1 Jan 2024')
-                        #('1d', '1 Jan 2023'),
-                        #('1w', '1 Jan 2022'),
-                        #('1m', '1 Jan 2020'),
-                        #('1d', '1 Jul 2023')
-                        ]
+                        print(Colors.GREEN + f"Running trading test for {symbol}..." + Colors.R)
 
-                        for interval, start_date in date_combinations:
+                        for interval, start_date in globals.date_combinations:
                             print(Colors.BOLD_WHITE + f"[+] Analyzing data for {interval} interval starting {start_date} and ending {globals.timestamp}" + Colors.R)
 
                             # Download the data
