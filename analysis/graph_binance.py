@@ -13,8 +13,6 @@ from binance.client import Client
 import globals
 from utils.colors import Colors
 
-print(globals.timestamp)
-sys.exit(0)
 
 # Get the parent of the parent directory
 grandfather_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
