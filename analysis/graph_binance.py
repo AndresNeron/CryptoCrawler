@@ -374,11 +374,13 @@ def plot_analyze_extreme_points_and_rsi(data, symbol, interval, start_date, alph
     ax1.set_title(f'Price and SMA for {symbol}')
     ax1.set_ylabel('Price / SMA')
     ax1.legend()
+
+    # We can change this alpha for testing purposes
     ax1.grid(axis='y', linestyle='--', alpha=0.6)
 
     # Highlight extreme points (local minima/maxima for price)
-    ax1.scatter(max_points.index, max_points['close'], color='green', label='Maxima', marker='o', s=50)
-    ax1.scatter(min_points.index, min_points['close'], color='red', label='Minima', marker='o', s=50)
+    ax1.scatter(max_points.index, max_points['close'], color='green', label='Maxima', marker='o', s=25)
+    ax1.scatter(min_points.index, min_points['close'], color='red', label='Minima', marker='o', s=25)
 
     # Connect maxima points with a green line
     ax1.plot(max_points.index, max_points['close'], color='green', linestyle='-', linewidth=1)
@@ -575,6 +577,7 @@ if __name__ == "__main__":
 
                             test_trading(data, symbol, interval, start_date)
                             analyze_extreme_points(data, symbol, interval, start_date)
+
 
                     except Exception as e:
                         print(Colors.RED + f"Could not run test trading for {symbol}: {e}" + Colors.R)
