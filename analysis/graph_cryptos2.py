@@ -27,7 +27,13 @@ from matplotlib.ticker import MaxNLocator
 from psycopg2.extras import execute_values
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+# Add the project root (../) to sys.path before any custom imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 # Personal packages
+import globals
 from utils.colors import Colors
 
 # Suppress pandas FutureWarnings
