@@ -8,7 +8,6 @@ graph_dir = f"{parent_path}/graphs/{timestamp}/backtesting"
 
 # Create needed directories
 os.makedirs(graph_dir, exist_ok=True)
-os.makedirs(f"{parent_path}/graphs/rsi", exist_ok=True)
 
 # Helper function to format dates like '6 dec 2024'
 def format_start_date(dt):
