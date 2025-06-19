@@ -28,6 +28,7 @@ gains_date_combinations = [
     '3 months',
     '6 months',
     '1 year',
-    '2 years'
+    '2 years',
+    '5 years'
 ]
 
