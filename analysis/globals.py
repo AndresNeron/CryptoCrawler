@@ -19,5 +19,5 @@ now = datetime.now()
 date_combinations = [
     ('15m', format_start_date(now - timedelta(days=7))),    # 7 days ago
     ('5m',  format_start_date(now - timedelta(days=14))),   # 14 days ago
-    ('1d',  format_start_date(now - timedelta(days=30)))    # 30 days ago
+    ('1d',  format_start_date(now - timedelta(days=365)))    # 30 days ago
 ]
