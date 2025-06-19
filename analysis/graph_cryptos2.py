@@ -458,50 +458,48 @@ def parse_relative_time(relative_time):
 
 
 # Graph gains from each personal asset added in a single plot
-def analysis3(cursor, conn, start_date="1 month", interval="1 day",):
+def analysis3(cursor, conn, start_date="1 month", interval="1 day"):
     """
     Generate a graph tracking my total portfolio assets.
+    Stores the result under graphs/total_trends/<time_span>/total_asset_trends_<timestamp>.png
     """
-    graphs_dir = get_graphs_directory(start_date)
-    graphs_dir = graphs_dir.replace(' ', '_')
-
-    # Handle start_date input
+    # Normalize start_date and generate actual datetime object
     if start_date is None:
-        start_date = datetime.now() - timedelta(days=30)
+        start_date_dt = datetime.now() - timedelta(days=30)
+        start_date_str = "1_month"
     elif isinstance(start_date, str):
         try:
-            # Try parsing as a relative time first
-            start_date = parse_relative_time(start_date)
+            start_date_dt = parse_relative_time(start_date)
         except ValueError:
-            # Fallback to parsing as a timestamp
             try:
-                start_date = datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+                start_date_dt = datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+                start_date_str = start_date_dt.strftime('%Y-%m-%d')
             except ValueError:
-                raise ValueError(f"Invalid date format for start_date: {start_date}. "
-                                 "Expected format: '1 day' or '%Y-%m-%d %H:%M:%S'")
+                raise ValueError(f"Invalid format for start_date: {start_date}")
+        else:
+            start_date_str = start_date.replace(' ', '_')
+    else:
+        start_date_dt = start_date
+        start_date_str = start_date_dt.strftime('%Y-%m-%d')
 
-    start_date_str = start_date.strftime('%Y-%m-%d %H:%M:%S')
-    end_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    start_date_sql = start_date_dt.strftime('%Y-%m-%d %H:%M:%S')
+    end_date = datetime.now()
+    end_date_sql = end_date.strftime('%Y-%m-%d %H:%M:%S')
 
     # Execute the query
     cursor.execute("""
-        SELECT 
-            timestamp, 
-            total_assets_usd
-        FROM 
-            total_assets
-        WHERE 
-            total_assets_usd > 125
-            AND total_assets_usd < 190
-            AND timestamp >= %s
-            AND timestamp < %s
-        ORDER BY 
-            timestamp
-    """, (start_date_str, end_date))
+        SELECT timestamp, total_assets_usd
+        FROM total_assets
+        WHERE total_assets_usd > 125
+          AND total_assets_usd < 190
+          AND timestamp >= %s
+          AND timestamp < %s
+        ORDER BY timestamp
+    """, (start_date_sql, end_date_sql))
 
     results = cursor.fetchall()
     if not results:
-        print(f"No data found for the specified criteria: start_date={start_date_str}, end_date={end_date}")
+        print(f"No data found for the specified criteria: start_date={start_date_sql}, end_date={end_date_sql}")
         return None
 
     timestamps = [row[0] for row in results]
@@ -510,7 +508,7 @@ def analysis3(cursor, conn, start_date="1 month", interval="1 day",):
     # Plot USD trends
     plt.figure(figsize=(10, 5))
     plt.plot(timestamps, total_assets_usd, marker='o', markersize=2, label="Total Assets (USD)", color='blue')
-    plt.title(f"Total Asset Value Trends\t{end_date}")
+    plt.title(f"Total Asset Value Trends\t{end_date_sql}\tInterval:{interval}")
     plt.xlabel("Timestamp")
     plt.ylabel("Value")
     plt.xticks(rotation=45)
@@ -518,9 +516,15 @@ def analysis3(cursor, conn, start_date="1 month", interval="1 day",):
     plt.grid(True)
     plt.tight_layout()
 
-    # Save the plot
-    graph_name = f"total_asset_trends_{end_date.replace(' ', '_')}.png"
-    graph_path = os.path.join(graphs_dir, graph_name)
+    # Generate custom directory path: graphs/total_trends/<interval>
+    graph_dir = os.path.join("graphs", "total_trends", start_date_str)
+    os.makedirs(graph_dir, exist_ok=True)
+
+    # Save with timestamp in filename
+    timestamp_suffix = end_date.strftime("%Y-%m-%d_%H-%M-%S")
+    graph_filename = f"total_asset_trends_{timestamp_suffix}.png"
+    graph_path = os.path.join(graph_dir, graph_filename)
+
     if os.path.exists(graph_path):
         os.remove(graph_path)
     plt.savefig(graph_path)
