@@ -8,16 +8,15 @@ import pandas as pd
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
 from binance.client import Client
+import globals
 
-# Get the parent of the parent directory
-grandfather_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if grandfather_path not in sys.path:
-    sys.path.append(grandfather_path)
+# Add the project root to sys.path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 # Personal packages
-import globals
 from utils.colors import Colors
-
 
 
 # Load environment variables from .env file
