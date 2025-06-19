@@ -21,3 +21,16 @@ date_combinations = [
     ('15m', format_start_date(now - timedelta(minutes=15 * 144))),  # ~7 hours ago
     ('1d',  format_start_date(now - timedelta(days=365)))
 ]
+
+# Gains date combinations
+gains_date_combinations = [
+    '1 day',
+    '1 week',
+    '2 weeks',
+    '1 month',
+    '3 months',
+    '6 months',
+    '1 year',
+    '2 years'
+]
+

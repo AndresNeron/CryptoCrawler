@@ -458,78 +458,66 @@ def parse_relative_time(relative_time):
 
 
 # Graph gains from each personal asset added in a single plot
-def analysis3(cursor, conn, start_date="1 month", interval="1 day"):
+def analysis3(cursor, conn, interval="1 day"):
     """
-    Generate a graph tracking my total portfolio assets.
-    Stores the result under graphs/total_trends/<time_span>/total_asset_trends_<timestamp>.png
+    Generate graphs tracking total portfolio assets for various time spans.
+    Stores results under: graphs/total_trends/<timestamp>/<time_span>/total_asset_trends_<timestamp>.png
     """
-    # Normalize start_date and generate actual datetime object
-    if start_date is None:
-        start_date_dt = datetime.now() - timedelta(days=30)
-        start_date_str = "1_month"
-    elif isinstance(start_date, str):
+    now = datetime.now()
+
+    for time_span in globals.gains_date_combinations:
         try:
-            start_date_dt = parse_relative_time(start_date)
+            start_date_dt = parse_relative_time(time_span)
         except ValueError:
-            try:
-                start_date_dt = datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
-                start_date_str = start_date_dt.strftime('%Y-%m-%d')
-            except ValueError:
-                raise ValueError(f"Invalid format for start_date: {start_date}")
-        else:
-            start_date_str = start_date.replace(' ', '_')
-    else:
-        start_date_dt = start_date
-        start_date_str = start_date_dt.strftime('%Y-%m-%d')
+            print(f"Invalid time span: {time_span}, skipping...")
+            continue
 
-    start_date_sql = start_date_dt.strftime('%Y-%m-%d %H:%M:%S')
-    end_date = datetime.now()
-    end_date_sql = end_date.strftime('%Y-%m-%d %H:%M:%S')
+        start_date_str = time_span.replace(' ', '_')
+        start_date_sql = start_date_dt.strftime('%Y-%m-%d %H:%M:%S')
+        end_date_sql = now.strftime('%Y-%m-%d %H:%M:%S')
 
-    # Execute the query
-    cursor.execute("""
-        SELECT timestamp, total_assets_usd
-        FROM total_assets
-        WHERE total_assets_usd > 125
-          AND total_assets_usd < 190
-          AND timestamp >= %s
-          AND timestamp < %s
-        ORDER BY timestamp
-    """, (start_date_sql, end_date_sql))
+        # Execute the query
+        cursor.execute("""
+            SELECT timestamp, total_assets_usd
+            FROM total_assets
+            WHERE total_assets_usd > 125
+              AND total_assets_usd < 190
+              AND timestamp >= %s
+              AND timestamp < %s
+            ORDER BY timestamp
+        """, (start_date_sql, end_date_sql))
 
-    results = cursor.fetchall()
-    if not results:
-        print(f"No data found for the specified criteria: start_date={start_date_sql}, end_date={end_date_sql}")
-        return None
+        results = cursor.fetchall()
+        if not results:
+            print(f"No data found for: time_span={time_span} ({start_date_sql} to {end_date_sql})")
+            continue
 
-    timestamps = [row[0] for row in results]
-    total_assets_usd = [float(row[1]) for row in results]
+        timestamps = [row[0] for row in results]
+        total_assets_usd = [float(row[1]) for row in results]
 
-    # Plot USD trends
-    plt.figure(figsize=(10, 5))
-    plt.plot(timestamps, total_assets_usd, marker='o', markersize=2, label="Total Assets (USD)", color='blue')
-    plt.title(f"Total Asset Value Trends\t{end_date_sql}\tInterval:{interval}")
-    plt.xlabel("Timestamp")
-    plt.ylabel("Value")
-    plt.xticks(rotation=45)
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
+        # Plot
+        plt.figure(figsize=(10, 5))
+        plt.plot(timestamps, total_assets_usd, marker='o', markersize=2, label="Total Assets (USD)", color='blue')
+        plt.title(f"Total Asset Value Trends\nInterval: {interval} | Range: {start_date_sql} → {end_date_sql}")
+        plt.xlabel("Timestamp")
+        plt.ylabel("Value (USD)")
+        plt.xticks(rotation=45)
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
 
-    # Generate custom directory path: graphs/total_trends/<interval>
-    graph_dir = os.path.join("graphs", "total_trends", globals.timestamp, start_date_str)
-    os.makedirs(graph_dir, exist_ok=True)
+        # Save path
+        graph_dir = os.path.join("graphs", "total_trends", globals.timestamp, start_date_str)
+        os.makedirs(graph_dir, exist_ok=True)
+        timestamp_suffix = now.strftime("%Y-%m-%d_%H-%M-%S")
+        graph_filename = f"total_asset_trends_{timestamp_suffix}_{interval.replace(' ', '_')}.png"
+        graph_path = os.path.join(graph_dir, graph_filename)
 
-    # Save with timestamp in filename
-    timestamp_suffix = end_date.strftime("%Y-%m-%d_%H-%M-%S")
-    graph_filename = f"total_asset_trends_{timestamp_suffix}_{interval}.png"
-    graph_path = os.path.join(graph_dir, graph_filename)
-
-    if os.path.exists(graph_path):
-        os.remove(graph_path)
-    plt.savefig(graph_path)
-    print(Colors.ORANGE + f"Graph saved as\t{Colors.BOLD_WHITE}{graph_path}" + Colors.R)
-    plt.close()
+        if os.path.exists(graph_path):
+            os.remove(graph_path)
+        plt.savefig(graph_path)
+        print(Colors.ORANGE + f"Graph saved as\t{Colors.BOLD_WHITE}{graph_path}" + Colors.R)
+        plt.close()
 
 
 def analysis4(cursor, conn, time_span="1_month"):
@@ -1557,10 +1545,7 @@ if __name__ == "__main__":
 
         # Analysis3
         if args.analysis == 3:
-            if args.time:
-                analysis3(cursor, conn, args.time)
-            else:
-                analysis3(cursor, conn)
+            analysis3(cursor, conn)
 
         # Analysis4
         if args.analysis == 4:
