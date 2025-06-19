@@ -17,10 +17,8 @@ now = datetime.now()
 
 # Dynamic date_combinations variable
 date_combinations = [
-    #('15m', format_start_date(now - timedelta(days=7))),    # 7 days ago
-    #('5m',  format_start_date(now - timedelta(days=14))),   # 14 days ago
-    ('15m', format_start_date(now - timedelta(minutes=15 * 28))),  # ~7 hours ago
     ('5m',  format_start_date(now - timedelta(minutes=5 * 28))),
+    ('15m', format_start_date(now - timedelta(minutes=15 * 144))),  # ~7 hours ago
     ('1d',  format_start_date(now - timedelta(days=365)))
     ('2d',  format_start_date(now - timedelta(days=430)))
 ]
