@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# This script works for interpreting and graphing data stored on cryptocurrency database
+# Some data analysis pipelines are applied here.
+
 import re
 import os
 import csv
@@ -225,6 +228,23 @@ def calculate_volatility(cryptocurrency, timestamps, prices):
     return latest_timestamp, volatility
 
 
+def get_limit_points(time_span):
+    # Map time spans to number of points to plot
+    points_map = {
+        "1_day": 50,
+        "1_week": 70,
+        "2_weeks": 100,
+        "1_month": 150,
+        "2_months": 200,
+        "3_months": 300,
+        "6_months": 400,
+        "1_year": 500,
+        "2_years": 700,
+        "5_years": 1000
+    }
+    # Default fallback if time_span not found
+    return points_map.get(time_span, 150)
+
 def analysis1(cursor, conn, time_span="1_month", volatility=False):
     """
     Generate a graph of price trends for each tracked cryptocurrency in the database,
@@ -233,6 +253,9 @@ def analysis1(cursor, conn, time_span="1_month", volatility=False):
 
     # Create a directory name based on the current date and time span
     graphs_dir = get_graphs_directory(time_span)
+
+    # Then inside analysis1 before cursor.execute:
+    limit_points = get_limit_points(time_span)
 
     cursor.execute(
         """
@@ -247,15 +270,33 @@ def analysis1(cursor, conn, time_span="1_month", volatility=False):
     for row in assets:
         asset = row[0]
 
+#        cursor.execute(
+#            """
+#            SELECT cryptocurrency, price, timestamp
+#            FROM crypto_data
+#            WHERE cryptocurrency = %s
+#              AND timestamp >= CURRENT_DATE - INTERVAL %s
+#            ORDER BY timestamp DESC;
+#            """, (asset,time_span)
+#        )
+
         cursor.execute(
             """
+            WITH ranked_data AS (
+                SELECT *,
+                       row_number() OVER (ORDER BY timestamp) AS rn,
+                       count(*) OVER () AS total
+                FROM crypto_data
+                WHERE cryptocurrency = %s
+                  AND timestamp >= CURRENT_DATE - INTERVAL %s
+            )
             SELECT cryptocurrency, price, timestamp
-            FROM crypto_data
-            WHERE cryptocurrency = %s
-              AND timestamp >= CURRENT_DATE - INTERVAL %s
+            FROM ranked_data
+            WHERE rn %% CEIL(total::float / %s)::int = 0
             ORDER BY timestamp DESC;
-            """, (asset,time_span)
+            """, (asset, time_span, limit_points)
         )
+
 
         results = cursor.fetchall()
 
@@ -305,6 +346,7 @@ def analysis1(cursor, conn, time_span="1_month", volatility=False):
         print(Colors.ORANGE + f"[{crypto_cont}]\tGraph saved as " + Colors.BOLD_WHITE +f"{graph_path}" + Colors.R)
         crypto_cont += 1
         plt.close()
+
 
 def analysis2(cursor, conn, time_span="2_week"):
     """
@@ -1342,6 +1384,7 @@ def backfill_portfolio(cursor, conn, time_span=""):
         print(f"Error during backfilling: {err}")
 
 
+
 def fetch_and_plot_stock_data(symbol='ORCL', time_span="1_month"):
     """
     Fetch historical data for a stock using Yahoo Finance and save a plot of its price trends.
@@ -1398,7 +1441,7 @@ def fetch_and_plot_stock_data(symbol='ORCL', time_span="1_month"):
 
         # Create a directory for saving the plot
         today = datetime.now().strftime("%Y-%m-%d")
-        dir_name = f"stock_plots_{today}"
+        dir_name = f"stock_plots/stock_plots_{today}"
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
 
