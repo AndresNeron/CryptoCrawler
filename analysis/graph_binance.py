@@ -300,7 +300,7 @@ def find_max_min_points(data, column='close'):
 
 def analyze_extreme_points(data, symbol, interval, start_date):
 
-    output_file = f"{globals.parent_path}/graphs/{globals.timestamp}/rsi/{symbol}_{interval}_{start_date.replace(' ', '_')}_extreme_points.png"
+    output_file = f"{globals.parent_path}/graphs/{globals.timestamp}/{symbol}_{interval}_{start_date.replace(' ', '_')}_extreme_points.png"
     print(Colors.BOLD_WHITE + f"[+] Analyzing data for {interval} interval starting {start_date} and ending {globals.timestamp}" + Colors.R)
 
     # Find maximum and minimum points
