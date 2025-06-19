@@ -414,7 +414,7 @@ def plot_analyze_extreme_points_and_rsi(data, symbol, interval, start_date, alph
     fig.tight_layout()
 
     # Save the plot
-    plot_filename = os.path.join(globals.graph_dir, f'analyze_extreme_points_and_rsi_{symbol}_{interval}_{start_date}_{globals.timestamp}.png')
+    plot_filename = os.path.join(globals.graph_dir, f'analyze_extreme_points_and_rsi_{symbol}_{interval}_{globals.timestamp}.png')
     plt.savefig(plot_filename)
     print(Colors.GREEN + f"[!] Plot saved as {plot_filename}" + Colors.R)
     plt.close()
@@ -560,7 +560,7 @@ if __name__ == "__main__":
                         print(Colors.GREEN + f"Running trading test for {symbol}..." + Colors.R)
 
                         for interval, start_date in globals.date_combinations:
-                            print(Colors.BOLD_WHITE + f"[+] Analyzing data for {interval} interval starting {start_date} and ending {globals.timestamp}" + Colors.R)
+                            print(Colors.BOLD_WHITE + f"[+] Analyzing data for {interval} interval starting {globals.timestamp}" + Colors.R)
 
                             # Download the data
                             data = download_data(symbol, interval, start_date)
