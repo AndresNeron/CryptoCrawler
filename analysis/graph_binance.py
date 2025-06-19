@@ -341,12 +341,13 @@ def exponential_smoothing(series, alpha=0.9):
     return smoothed_series
 
 
-def plot_analyze_extreme_points_and_rsi(data, symbol, interval, start_date, alpha=0.9):
+def plot_analyze_extreme_points_and_rsi(data, symbol, interval, start_date):
     """
-    Plot analyze_extreme_points graph and RSI as subplots in the same figure.
+    Plot analyze_extreme_points graph and RSI as subplots in the same figure
+    for multiple alpha values to fine-tune exponential smoothing.
     """
     start_date = start_date.replace(' ', '_').lower()
-
+    
     # Ensure necessary indicators are calculated
     calculate_indicators(data)
 
@@ -354,72 +355,62 @@ def plot_analyze_extreme_points_and_rsi(data, symbol, interval, start_date, alph
     overbought = data[data['RSI'] > 70]
     oversold = data[data['RSI'] < 30]
 
-    # Exponentially smooth the overbought and oversold RSI points
-    smoothed_overbought = exponential_smoothing(overbought['RSI'], alpha)
-    smoothed_oversold = exponential_smoothing(oversold['RSI'], alpha)
+    # Try a range of alpha values (e.g. from 0.1 to 0.9)
+    for alpha in [round(a, 2) for a in [i * 0.1 for i in range(1, 10)]]:
+        # Exponentially smooth the overbought and oversold RSI points
+        smoothed_overbought = exponential_smoothing(overbought['RSI'], alpha)
+        smoothed_oversold = exponential_smoothing(oversold['RSI'], alpha)
 
-    # Reindex the smoothed values to match the original data
-    smoothed_overbought = smoothed_overbought.reindex(data.index, method='ffill')
-    smoothed_oversold = smoothed_oversold.reindex(data.index, method='ffill')
+        # Reindex the smoothed values to match the original data
+        smoothed_overbought = smoothed_overbought.reindex(data.index, method='ffill')
+        smoothed_oversold = smoothed_oversold.reindex(data.index, method='ffill')
 
-    # Identify maxima and minima for the price (close)
-    max_points, min_points = find_max_min_points(data, column='close')
+        # Identify maxima and minima for the price (close)
+        max_points, min_points = find_max_min_points(data, column='close')
 
-    # Create a figure with two subplots: one for analyze_extreme_points and another for RSI
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+        # Create a figure with two subplots
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
 
-    # Plot analyze_extreme_points data in the first subplot
-    ax1.plot(data.index, data['close'], label='Price', color='blue', linewidth=1.5)
-    ax1.plot(data.index, data['SMA'], label='SMA (50)', color='red', linestyle='--')
-    ax1.set_title(f'Price and SMA for {symbol}')
-    ax1.set_ylabel('Price / SMA')
-    ax1.legend()
+        # --- Price plot ---
+        ax1.plot(data.index, data['close'], label='Price', color='blue', linewidth=1.5)
+        ax1.plot(data.index, data['SMA'], label='SMA (50)', color='red', linestyle='--')
+        ax1.set_title(f'Price and SMA for {symbol} — α={alpha}')
+        ax1.set_ylabel('Price / SMA')
+        ax1.grid(axis='y', linestyle='--', alpha=0.6)
 
-    # We can change this alpha for testing purposes
-    ax1.grid(axis='y', linestyle='--', alpha=0.6)
+        ax1.scatter(max_points.index, max_points['close'], color='green', label='Maxima', marker='o', s=25)
+        ax1.scatter(min_points.index, min_points['close'], color='red', label='Minima', marker='o', s=25)
+        ax1.plot(max_points.index, max_points['close'], color='green', linestyle='-', linewidth=1)
+        ax1.plot(min_points.index, min_points['close'], color='red', linestyle='-', linewidth=1)
+        ax1.legend()
 
-    # Highlight extreme points (local minima/maxima for price)
-    ax1.scatter(max_points.index, max_points['close'], color='green', label='Maxima', marker='o', s=25)
-    ax1.scatter(min_points.index, min_points['close'], color='red', label='Minima', marker='o', s=25)
+        # --- RSI plot ---
+        ax2.plot(data.index, data['RSI'], label='RSI (14)', color='blue', linewidth=1.5)
+        ax2.axhline(30, color='red', linestyle='--', linewidth=0.8, label='RSI 30 (Oversold)')
+        ax2.axhline(70, color='red', linestyle='--', linewidth=0.8, label='RSI 70 (Overbought)')
+        ax2.fill_between(data.index, 30, 70, color='yellow', alpha=0.1)
 
-    # Connect maxima points with a green line
-    ax1.plot(max_points.index, max_points['close'], color='green', linestyle='-', linewidth=1)
+        ax2.scatter(overbought.index, overbought['RSI'], color='green', label='Overbought', marker='o')
+        ax2.scatter(oversold.index, oversold['RSI'], color='red', label='Oversold', marker='o')
+        ax2.plot(data.index, smoothed_overbought, color='green', linestyle='-', linewidth=1, label='Smoothed Overbought')
+        ax2.plot(data.index, smoothed_oversold, color='red', linestyle='-', linewidth=1, label='Smoothed Oversold')
 
-    # Connect minima points with a red line
-    ax1.plot(min_points.index, min_points['close'], color='red', linestyle='-', linewidth=1)
+        ax2.set_ylabel('RSI')
+        ax2.set_title(f'Relative Strength Index (RSI) — α={alpha}', loc='left', pad=40)
+        ax2.grid(axis='y', linestyle='--', alpha=0.6)
+        ax2.legend()
+        ax2.set_xlabel('Date')
 
-    # Plot RSI in the second subplot
-    ax2.plot(data.index, data['RSI'], label='RSI (14)', color='blue', linewidth=1.5)
-    ax2.axhline(30, color='red', linestyle='--', linewidth=0.8, label='RSI 30 (Oversold)')
-    ax2.axhline(70, color='red', linestyle='--', linewidth=0.8, label='RSI 70 (Overbought)')
-    ax2.fill_between(data.index, 30, 70, color='yellow', alpha=0.1)  # Highlight neutral RSI zone
-    ax2.set_ylabel('RSI')
-    ax2.set_title('Relative Strength Index (RSI)', loc='left', pad=40)
+        fig.tight_layout()
 
-    # Plot extreme RSI points (overbought and oversold)
-    ax2.scatter(overbought.index, overbought['RSI'], color='green', label='Overbought', marker='o')
-    ax2.scatter(oversold.index, oversold['RSI'], color='red', label='Oversold', marker='o')
-
-    # Connect overbought points with a red line (smoothed)
-    #ax2.plot(data.index, smoothed_overbought, color='red', linestyle='-', linewidth=1)
-
-    # Connect oversold points with a blue line (smoothed)
-    #ax2.plot(data.index, smoothed_oversold, color='blue', linestyle='-', linewidth=1)
-
-    ax2.legend()
-    ax2.grid(axis='y', linestyle='--', alpha=0.6)
-
-    # Set the x-axis label for the bottom subplot
-    ax2.set_xlabel('Date')
-
-    # Adjust layout for better spacing
-    fig.tight_layout()
-
-    # Save the plot
-    plot_filename = os.path.join(globals.graph_dir, f'analyze_extreme_points_and_rsi_{symbol}_{interval}_{globals.timestamp}.png')
-    plt.savefig(plot_filename)
-    print(Colors.GREEN + f"[!] Plot saved as {plot_filename}" + Colors.R)
-    plt.close()
+        # Save file with alpha value included
+        plot_filename = os.path.join(
+            globals.graph_dir,
+            f'analyze_extreme_points_and_rsi_{symbol}_{interval}_{start_date}_alpha_{alpha}_{globals.timestamp}.png'
+        )
+        plt.savefig(plot_filename)
+        print(Colors.GREEN + f"[✓] Saved: {plot_filename}" + Colors.R)
+        plt.close()
 
 
 
