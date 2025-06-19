@@ -323,7 +323,7 @@ def analyze_extreme_points(data, symbol, interval, start_date):
     plt.plot(min_points.index, min_points['close'], color='red', linestyle='--', label='Minima Line')
 
     # Add title, legend, and grid
-    plt.title(f"Maximum and Minimum Points for {symbol} ({interval}, {start_date})")
+    plt.title(f"Maximum and Minimum Points for {symbol} ({interval}, {start_date} - {globals.timestamp})")
     plt.legend()
     plt.grid()
 
