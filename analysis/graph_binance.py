@@ -9,15 +9,16 @@ from dotenv import load_dotenv
 import matplotlib.pyplot as plt
 from binance.client import Client
 
+# Get the parent of the parent directory
+grandfather_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if grandfather_path not in sys.path:
+    sys.path.append(grandfather_path)
+
 # Personal packages
 import globals
 from utils.colors import Colors
 
 
-# Get the parent of the parent directory
-grandfather_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if grandfather_path not in sys.path:
-    sys.path.append(grandfather_path)
 
 # Load environment variables from .env file
 load_dotenv()
