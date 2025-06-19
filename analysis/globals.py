@@ -21,5 +21,6 @@ date_combinations = [
     #('5m',  format_start_date(now - timedelta(days=14))),   # 14 days ago
     ('15m', format_start_date(now - timedelta(minutes=15 * 28))),  # ~7 hours ago
     ('5m',  format_start_date(now - timedelta(minutes=5 * 28))),
-    ('1d',  format_start_date(now - timedelta(days=365)))    # 30 days ago
+    ('1d',  format_start_date(now - timedelta(days=365)))
+    ('2d',  format_start_date(now - timedelta(days=430)))
 ]
