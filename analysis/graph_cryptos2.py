@@ -458,7 +458,7 @@ def parse_relative_time(relative_time):
 
 
 # Graph gains from each personal asset added in a single plot
-def analysis3(cursor, conn, interval="1 day"):
+def analysis3(cursor, conn):
     """
     Generate graphs tracking total portfolio assets for various time spans.
     Stores results under: graphs/total_trends/<timestamp>/<time_span>/total_asset_trends_<timestamp>.png
@@ -498,7 +498,7 @@ def analysis3(cursor, conn, interval="1 day"):
         # Plot
         plt.figure(figsize=(10, 5))
         plt.plot(timestamps, total_assets_usd, marker='o', markersize=2, label="Total Assets (USD)", color='blue')
-        plt.title(f"Total Asset Value Trends\nInterval: {interval} | Range: {start_date_sql} → {end_date_sql}")
+        plt.title(f"Total Asset Value Trends\nInterval: {start_date_str} | Range: {start_date_sql} → {end_date_sql}")
         plt.xlabel("Timestamp")
         plt.ylabel("Value (USD)")
         plt.xticks(rotation=45)
@@ -510,7 +510,7 @@ def analysis3(cursor, conn, interval="1 day"):
         graph_dir = os.path.join("graphs", "total_trends", globals.timestamp, start_date_str)
         os.makedirs(graph_dir, exist_ok=True)
         timestamp_suffix = now.strftime("%Y-%m-%d_%H-%M-%S")
-        graph_filename = f"total_asset_trends_{timestamp_suffix}_{interval.replace(' ', '_')}.png"
+        graph_filename = f"total_asset_trends_{timestamp_suffix}_{start_date_str}.png"
         graph_path = os.path.join(graph_dir, graph_filename)
 
         if os.path.exists(graph_path):
