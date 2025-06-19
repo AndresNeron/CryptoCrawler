@@ -24,8 +24,6 @@ date_combinations = [
 
 # Gains date combinations
 gains_date_combinations = [
-    '1 week',
-    '2 weeks',
     '1 month',
     '3 months',
     '6 months',
