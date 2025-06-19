@@ -8,16 +8,15 @@ import pandas as pd
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
 from binance.client import Client
-import globals
 
-# Add the project root to sys.path
+# Add the project root (../) to sys.path before any custom imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-# Personal packages
+# Now safe to import personal packages
+import globals
 from utils.colors import Colors
-
 
 # Load environment variables from .env file
 load_dotenv()
