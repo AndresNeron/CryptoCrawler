@@ -39,7 +39,7 @@ Located in the `binance` directory, `live_trading_bot.py` enables live trading o
 To enable live trading, you must provide a Binance API key with **trading permissions** in your `.env` file.
 
 > Use this feature in testing mode.
-> ⚠️If you use this feature in real mode is at your own risk. It is strongly recommended to test in test mode
+> ⚠️If you use this feature in real mode is at your own risk. It is strongly recommended to probe in test mode
 or with a paper trading setup before committing real funds.
 
 # Requirements
