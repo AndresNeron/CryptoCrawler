@@ -1,22 +1,40 @@
 # CryptoCrawler
-This is a tool for automating the fetching of cryptocurrency prices in real time
-writen in python and intented to run on a Debian based system where Tensorflow will be build.
+CryptoCrawler is a Python-based tool for automating the real-time fetching of cryptocurrency prices.
 
-The idea of this project is to distribute the crawling of different cryptos across nodes.
-And store historical on a distributed PostgreSQL database.
+The core idea of this project is to distribute the crawling of various cryptocurrencies across nodes 
+in a peer-to-peer (P2P) network, and store historical price data in a distributed PostgreSQL database.
+
+Additional capabilities include graphing the price evolution of different cryptocurrencies over time, 
+and performing predictions using Long Short-Term Memory (LSTM) and other neural network models.
+
+    💡 Due to the use of TensorFlow, this project is intended to run on Ubuntu or other Debian-based 
+	systems officially supported by TensorFlow.
+
 
 # Features
-Under 'analysis' directory there exist graph_cryptos.py for graphing the different cryptos
-with data from the database for different time periods.
+- Graphing tools:
+Located in the analysis directory, graph_cryptos.py lets you visualize cryptocurrency price data from 
+the database over different time periods.
 
-Tensorflow is used inside this project for training inference AI models over timestamp data.
+- AI-powered prediction:
+TensorFlow is used to train and perform inference using LSTM and other models on timestamped price data.
 
 # Track personal assets
-This project creates schemas for tracking your personal assets across timestamps. You need to setup
-your binance API key on a secure file for this to work using your wallet.
+CryptoCrawler supports tracking your personal crypto assets over time.
+To enable this feature:
+
+- Configure your Binance API key in a secure .env file.
+
+- The system will create schemas in the database for logging and analyzing your wallet's historical value.
+
+- If Binance API key with read permissions is loaded, the program will fetch the prices from Binance API too.
 
 # Requirements
-This was tested on a Debian based system (Ubuntu in particular). The package manager apt is used in this code.
+- Tested on Debian-based systems, especially Ubuntu.
+
+- Uses apt for package management.
+
+- Requires Python 3.x, PostgreSQL, and TensorFlow.
 
 # Installation
 
