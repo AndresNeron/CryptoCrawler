@@ -29,6 +29,19 @@ To enable this feature:
 
 - If Binance API key with read permissions is loaded, the program will fetch the prices from Binance API too.
 
+# Live Trading Bot
+
+Located in the `binance` directory, `live_trading_bot.py` enables live trading on Binance using strategy based on:
+
+- **SMA (Simple Moving Average)** crossover signals with SMA-30 and SMA-70
+- **Stop-loss** mechanisms for risk management
+
+To enable live trading, you must provide a Binance API key with **trading permissions** in your `.env` file.
+
+> Use this feature in testing mode.
+> ⚠️If you use this feature in real mode is at your own risk. It is strongly recommended to test in test mode
+or with a paper trading setup before committing real funds.
+
 # Requirements
 - Tested on Debian-based systems, especially Ubuntu.
 
@@ -54,7 +67,6 @@ And will include cronjob located at /etc/cron.d/crypto_crawler like this:
 
 The cronjob above will fetch the real price of each crypto stored on crawled_cryptos table and will save it in the 
 table crypto_data of the PostgreSQL database.
-
 
 
 # Active development
